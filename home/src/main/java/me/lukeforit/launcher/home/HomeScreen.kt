@@ -2,7 +2,6 @@ package me.lukeforit.launcher.home
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ResolveInfo
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,11 +27,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,18 +46,8 @@ import me.lukeforit.launcher.domain.model.AppInfo
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
-    val context = LocalContext.current
-    // State to hold the list of applications
-    var appList by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
-    // State to manage loading status
-    var isLoading by remember { mutableStateOf(true) }
-
-    // LaunchedEffect runs code once when the component is mounted to fetch the data
-    LaunchedEffect(Unit) {
-        // Run application loading in a coroutine to prevent UI blocking
-        appList = loadApplications(context)
-        isLoading = false
-    }
+    val appList by viewModel.apps.collectAsState()
+    val isLoading = appList.isEmpty()
 
     Box(
         modifier = Modifier
@@ -171,35 +158,6 @@ fun launchApp(context: Context, packageName: String) {
     } else {
         Toast.makeText(context, "Cannot launch app: $packageName", Toast.LENGTH_SHORT).show()
     }
-}
-
-/**
- * Queries the PackageManager to get a list of all launchable apps.
- * This should be run on a background thread (handled by LaunchedEffect).
- */
-private fun loadApplications(context: Context): List<AppInfo> {
-    val packageManager = context.packageManager
-
-    // Intent to find all activities that can be launched
-    val mainIntent = Intent(Intent.ACTION_MAIN, null)
-    mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-
-    val allApps: List<ResolveInfo> = packageManager
-        .queryIntentActivities(mainIntent, 0)
-
-    val appList = mutableListOf<AppInfo>()
-
-    for (ri in allApps) {
-        val app = AppInfo(
-            label = ri.loadLabel(packageManager).toString(),
-            packageName = ri.activityInfo.packageName,
-            icon = ri.activityInfo.loadIcon(packageManager)
-        )
-        appList.add(app)
-    }
-
-    // Sort the list alphabetically by app name
-    return appList.sortedBy { it.label.lowercase() }
 }
 
 @Preview(showBackground = true)

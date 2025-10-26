@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.bundles.androidx.compose)
     implementation(libs.hilt.android)
 
+    ksp(libs.hilt.compiler.ksp)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.junit)

@@ -1,20 +1,18 @@
 package me.lukeforit.launcher.domain.di
 
-import android.content.Context
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.lukeforit.launcher.domain.AppInfoProvider
 import me.lukeforit.launcher.domain.AppInfoProviderImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DomainModule {
+abstract class DomainModule {
 
-    @Provides
-    fun appInfoProvider(
-        @ApplicationContext context: Context,
-    ): AppInfoProvider = AppInfoProviderImpl(context)
+    @Binds
+    @Singleton
+    abstract fun appInfoProvider(impl: AppInfoProviderImpl): AppInfoProvider
 }
