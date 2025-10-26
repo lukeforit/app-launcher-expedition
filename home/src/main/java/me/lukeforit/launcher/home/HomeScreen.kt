@@ -46,20 +46,26 @@ import me.lukeforit.launcher.domain.model.AppInfo
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
-    val appList by viewModel.apps.collectAsState()
-    val isLoading = appList.isEmpty()
+    val homeState by viewModel.homeState.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        if (isLoading) {
-            // Show a loading indicator while fetching the list
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
-        } else {
-            // Display the list of applications
-            AppList(apps = appList)
+        when (val state = homeState) {
+            is HomeState.Loading -> {
+                CircularProgressIndicator(Modifier.align(Alignment.Center))
+            }
+            is HomeState.Success -> {
+                AppList(apps = state.apps)
+            }
+            is HomeState.Error -> {
+                Text(
+                    text = state.message,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
 }
