@@ -1,4 +1,4 @@
-package me.lukeforit.launcher.domain
+package me.lukeforit.launcher.domain.model
 
 import android.graphics.drawable.Drawable
 
