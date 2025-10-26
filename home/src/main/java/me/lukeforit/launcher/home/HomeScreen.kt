@@ -48,7 +48,7 @@ import androidx.core.graphics.drawable.toBitmap
 import me.lukeforit.launcher.domain.AppInfo
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: HomeViewModel) {
     val context = LocalContext.current
     // State to hold the list of applications
     var appList by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
