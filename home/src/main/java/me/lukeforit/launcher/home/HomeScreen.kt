@@ -2,6 +2,7 @@ package me.lukeforit.launcher.home
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import me.lukeforit.launcher.domain.model.AppInfo
+import androidx.core.graphics.drawable.toDrawable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -180,18 +182,19 @@ fun launchApp(context: Context, packageName: String) {
 @Composable
 fun PreviewAppList() {
     MaterialTheme(colorScheme = darkColorScheme()) {
-//        val dummyApps = listOf(
-//            AppInfo("Gmail", "com.google.android.gm",
-//                painterResource(R.drawable.sym_def_app_icon).toBitmap().toDrawable(LocalContext.current.resources)
-//            ),
-//            AppInfo("Maps", "com.google.android.apps.maps",
-//                painterResource(R.drawable.sym_def_app_icon).toBitmap().toDrawable(LocalContext.current.resources)
-//            ),
-//            AppInfo("YouTube", "com.google.android.youtube",
-//                painterResource(R.drawable.sym_def_app_icon).toBitmap().toDrawable(LocalContext.current.resources)
-//            ),
-//        )
-//        // Note: For a real preview, you can't easily load real icons, so we use dummy drawables.
-//        AppList(apps = dummyApps)
+        val dummyApps = listOf(
+            AppInfo(
+                label = "Gmail", packageName = "com.google.android.gm", icon = 0xFFF44336.toInt().toDrawable()
+            ),
+            AppInfo(
+                label = "Maps", packageName = "com.google.android.apps.maps",
+                icon = 0xFF4CAF50.toInt().toDrawable()
+            ),
+            AppInfo(
+                label = "YouTube", packageName = "com.google.android.youtube",
+                icon = 0xFF2196F3.toInt().toDrawable()
+            ),
+        )
+        AppList(apps = dummyApps)
     }
 }
