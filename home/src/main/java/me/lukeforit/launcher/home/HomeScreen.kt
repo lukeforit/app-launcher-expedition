@@ -25,8 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,10 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,36 +52,31 @@ import me.lukeforit.launcher.domain.model.AppInfo
 fun HomeScreen(viewModel: HomeViewModel) {
     val homeState by viewModel.homeState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "App Drawer",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        }
-    ) { paddingValues ->
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.test_image),
+            contentDescription = "background",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
+                .alpha(0.8f),
+            contentScale = ContentScale.Crop
+        )
+        Scaffold(
+            containerColor = Color.Transparent
+        ) { paddingValues ->
             when (val state = homeState) {
                 is HomeState.Loading -> {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    CircularProgressIndicator(Modifier.padding(paddingValues))
                 }
+
                 is HomeState.Success -> {
-                    AppList(apps = state.apps)
+                    AppList(apps = state.apps, paddingValues = paddingValues)
                 }
+
                 is HomeState.Error -> {
                     Text(
                         text = state.message,
@@ -96,11 +92,15 @@ fun HomeScreen(viewModel: HomeViewModel) {
  * Composable for the list view of all applications.
  */
 @Composable
-fun AppList(apps: List<AppInfo>) {
+fun AppList(
+    apps: List<AppInfo>,
+    paddingValues: PaddingValues = PaddingValues(),
+) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp)
+        contentPadding = paddingValues,
     ) {
         items(apps) { app ->
             AppItem(app = app)
@@ -122,7 +122,7 @@ fun AppItem(app: AppInfo) {
             .clip(RoundedCornerShape(12.dp))
             .clickable { launchApp(context, app.packageName) },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
