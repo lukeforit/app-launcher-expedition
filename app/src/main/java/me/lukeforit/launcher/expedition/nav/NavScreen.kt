@@ -1,6 +1,8 @@
 package me.lukeforit.launcher.expedition.nav
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -20,11 +22,14 @@ sealed class NavScreen : NavKey {
     object MyApps : NavScreen()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavMainScreen() {
     val backStack = rememberNavBackStack(NavScreen.Home)
+    val bottomSheetStrategy = remember { TransparentBottomSheetSceneStrategy<NavKey>() }
     NavDisplay(
         backStack = backStack,
+        sceneStrategy = bottomSheetStrategy,
         onBack = { backStack.removeLastOrNull() },
         entryProvider = entryProvider {
             entry<NavScreen.Home> {
@@ -34,7 +39,9 @@ fun NavMainScreen() {
                     viewModel = viewModel,
                 )
             }
-            entry<NavScreen.MyApps> {
+            entry<NavScreen.MyApps>(
+                metadata = TransparentBottomSheetSceneStrategy.bottomSheet()
+            ) {
                 val viewModel = hiltViewModel<MyAppsViewModel>()
                 MyAppsScreen(viewModel = viewModel)
             }

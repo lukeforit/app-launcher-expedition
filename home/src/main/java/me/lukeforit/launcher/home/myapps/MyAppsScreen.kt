@@ -43,7 +43,7 @@ fun MyAppsScreen(viewModel: MyAppsViewModel) {
     val myAppsState by viewModel.myAppsState.collectAsStateWithLifecycle()
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = Color.Transparent,
     ) { paddingValues ->
         AppGrid(apps = myAppsState.apps, paddingValues = paddingValues)
     }
