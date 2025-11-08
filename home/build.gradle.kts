@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.bundles.androidx.compose)
     implementation(libs.hilt.android)
+    implementation(libs.kotlinx.collections.immutable)
 
     ksp(libs.hilt.compiler.ksp)
 

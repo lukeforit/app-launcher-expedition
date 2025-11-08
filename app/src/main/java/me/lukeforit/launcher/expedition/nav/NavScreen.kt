@@ -9,10 +9,14 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import me.lukeforit.launcher.home.HomeScreen
 import me.lukeforit.launcher.home.HomeViewModel
+import me.lukeforit.launcher.home.myapps.MyAppsScreen
+import me.lukeforit.launcher.home.myapps.MyAppsViewModel
 
 sealed class NavScreen : NavKey {
     @Serializable
     object Home : NavScreen()
+    @Serializable
+    object MyApps : NavScreen()
 }
 
 @Composable
@@ -25,6 +29,10 @@ fun NavMainScreen() {
             entry<NavScreen.Home> {
                 val viewModel = hiltViewModel<HomeViewModel>()
                 HomeScreen(viewModel = viewModel)
+            }
+            entry<NavScreen.MyApps> {
+                val viewModel = hiltViewModel<MyAppsViewModel>()
+                MyAppsScreen(viewModel = viewModel)
             }
         }
     )
