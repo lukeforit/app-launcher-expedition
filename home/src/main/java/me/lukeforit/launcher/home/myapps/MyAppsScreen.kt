@@ -4,9 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,11 +27,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -72,7 +78,6 @@ fun AppGridItem(app: AppInfo) {
     val context = LocalContext.current
     Column(
         modifier = Modifier
-            .clip(CircleShape)
             .clickable { launchApp(context, app.packageName) }
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -80,14 +85,20 @@ fun AppGridItem(app: AppInfo) {
         val imageBitmap = remember(app.icon) {
             app.icon.toBitmap(width = 96, height = 96).asImageBitmap()
         }
-        Image(
-            bitmap = imageBitmap,
-            contentDescription = "Icon for ${app.label}",
+        Box(
             modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.White)
-        )
+                .size(80.dp)
+                .border(4.dp, MaterialTheme.colorScheme.primary, RotatedSquare),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                bitmap = imageBitmap,
+                contentDescription = app.label,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+        }
 
         Text(
             text = app.label,
@@ -95,6 +106,29 @@ fun AppGridItem(app: AppInfo) {
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+val RotatedSquare = object : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        return Outline.Generic(
+            path = Path().apply {
+                // Move to the top center
+                moveTo(size.width / 2f, 0f)
+                // Line to the right center
+                lineTo(size.width, size.height / 2f)
+                // Line to the bottom center
+                lineTo(size.width / 2f, size.height)
+                // Line to the left center
+                lineTo(0f, size.height / 2f)
+                // Close the path to complete the diamond
+                close()
+            }
         )
     }
 }
