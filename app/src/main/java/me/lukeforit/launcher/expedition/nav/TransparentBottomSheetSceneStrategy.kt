@@ -3,8 +3,10 @@ package me.lukeforit.launcher.expedition.nav
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
@@ -25,9 +27,11 @@ internal class TransparentBottomSheetScene<T : Any>(
 
     override val content: @Composable (() -> Unit) = {
         ModalBottomSheet(
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             onDismissRequest = onBack,
             properties = modalBottomSheetProperties,
             containerColor = Color.Transparent,
+            tonalElevation = 16.dp,
         ) {
             entry.Content()
         }
