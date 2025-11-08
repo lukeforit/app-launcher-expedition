@@ -15,6 +15,7 @@ import me.lukeforit.launcher.home.myapps.MyAppsViewModel
 sealed class NavScreen : NavKey {
     @Serializable
     object Home : NavScreen()
+
     @Serializable
     object MyApps : NavScreen()
 }
@@ -28,7 +29,10 @@ fun NavMainScreen() {
         entryProvider = entryProvider {
             entry<NavScreen.Home> {
                 val viewModel = hiltViewModel<HomeViewModel>()
-                HomeScreen(viewModel = viewModel)
+                HomeScreen(
+                    onSwipeFromBottom = { backStack.add(NavScreen.MyApps) },
+                    viewModel = viewModel,
+                )
             }
             entry<NavScreen.MyApps> {
                 val viewModel = hiltViewModel<MyAppsViewModel>()

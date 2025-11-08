@@ -2,6 +2,7 @@ package me.lukeforit.launcher.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,21 +19,49 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import me.lukeforit.launcher.domain.model.AppInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(
+    onSwipeFromBottom: () -> Unit,
+    viewModel: HomeViewModel
+) {
     val homeState by viewModel.homeState.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .pointerInput(Unit) {
+                var dragStartedInBottomArea = false
+                var verticalDragAmount = 0f
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        verticalDragAmount = 0f
+                        dragStartedInBottomArea = offset.y >= size.height * 0.5f
+                    },
+                    onDrag = { change, dragAmount ->
+                        if (dragStartedInBottomArea) {
+                            verticalDragAmount += dragAmount.y
+                            if (dragAmount.y < 0) {
+                                change.consume()
+                            }
+                        }
+                    },
+                    onDragEnd = {
+                        if (dragStartedInBottomArea && verticalDragAmount < -50.dp.toPx()) {
+                            onSwipeFromBottom()
+                        }
+                    }
+                )
+            }
     ) {
         Image(
             painter = painterResource(id = R.drawable.test_image),
