@@ -1,4 +1,4 @@
-package me.lukeforit.launcher.expedition.ui.theme
+package me.lukeforit.launcher.uicore.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

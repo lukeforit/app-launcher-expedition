@@ -2,11 +2,10 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "me.lukeforit.launcher.home"
+    namespace = "me.lukeforit.launcher.uicore"
     compileSdk {
         version = release(36)
     }
@@ -40,16 +39,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":ui-core"))
-    implementation(project(":domain"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.bundles.androidx.compose)
-    implementation(libs.hilt.android)
-    implementation(libs.kotlinx.collections.immutable)
-
-    ksp(libs.hilt.compiler.ksp)
 
     testImplementation(libs.junit)
 

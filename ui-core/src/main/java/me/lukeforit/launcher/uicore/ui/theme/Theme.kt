@@ -1,6 +1,5 @@
-package me.lukeforit.launcher.expedition.ui.theme
+package me.lukeforit.launcher.uicore.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

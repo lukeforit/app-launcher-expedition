@@ -23,3 +23,4 @@ rootProject.name = "Expedition 33 launcher"
 include(":app")
 include(":home")
 include(":domain")
+include(":ui-core")
