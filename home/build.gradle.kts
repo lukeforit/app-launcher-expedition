@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.bundles.androidx.compose)
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.accompanist.drawablepainter)
 
     ksp(libs.hilt.compiler.ksp)
 

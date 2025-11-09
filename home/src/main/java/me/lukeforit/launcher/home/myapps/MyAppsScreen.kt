@@ -7,6 +7,9 @@ import android.graphics.Color.BLUE
 import android.graphics.Color.GREEN
 import android.graphics.Color.RED
 import android.graphics.Color.YELLOW
+import android.graphics.drawable.AdaptiveIconDrawable
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,23 +25,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,9 +48,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import me.lukeforit.launcher.domain.model.AppInfo
 import me.lukeforit.launcher.uicore.ui.theme.Expedition33LauncherTheme
 
@@ -91,9 +93,6 @@ fun AppGridItem(app: AppInfo) {
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val imageBitmap = remember(app.icon) {
-            app.icon.toBitmap(width = 96, height = 96).asImageBitmap()
-        }
         Box(
             modifier = Modifier
                 .size(80.dp)
@@ -102,12 +101,9 @@ fun AppGridItem(app: AppInfo) {
                 .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                bitmap = imageBitmap,
-                contentDescription = app.label,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
+            AppIconImage(
+                icon = app.icon,
+                modifier = Modifier.size(64.dp),
             )
         }
 
@@ -121,6 +117,40 @@ fun AppGridItem(app: AppInfo) {
     }
 }
 
+@Composable
+fun AppIconImage(
+    icon: Drawable,
+    modifier: Modifier = Modifier,
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && icon is AdaptiveIconDrawable && icon.monochrome != null) {
+        Image(
+            painter = rememberDrawablePainter(icon.monochrome),
+            contentDescription = null,
+            modifier = modifier,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, BlendMode.SrcIn),
+        )
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && icon is AdaptiveIconDrawable) {
+        Image(
+            painter = rememberDrawablePainter(icon.background),
+            contentDescription = null,
+            modifier = modifier,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background, BlendMode.SrcIn),
+        )
+        Image(
+            painter = rememberDrawablePainter(icon.foreground),
+            contentDescription = null,
+            modifier = modifier,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, BlendMode.SrcIn),
+        )
+    } else {
+        Image(
+            painter = rememberDrawablePainter(icon),
+            contentDescription = null,
+            modifier = modifier
+        )
+    }
+}
+
 val RotatedSquare = object : Shape {
     override fun createOutline(
         size: Size,
@@ -129,15 +159,10 @@ val RotatedSquare = object : Shape {
     ): Outline {
         return Outline.Generic(
             path = Path().apply {
-                // Move to the top center
                 moveTo(size.width / 2f, 0f)
-                // Line to the right center
                 lineTo(size.width, size.height / 2f)
-                // Line to the bottom center
                 lineTo(size.width / 2f, size.height)
-                // Line to the left center
                 lineTo(0f, size.height / 2f)
-                // Close the path to complete the diamond
                 close()
             }
         )
@@ -146,7 +171,7 @@ val RotatedSquare = object : Shape {
 
 fun launchApp(context: Context, packageName: String) {
     val launchIntent: Intent? = context.packageManager
-        .getLaunchIntentForPackage(packageName.toString())
+        .getLaunchIntentForPackage(packageName)
 
     if (launchIntent != null) {
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -163,11 +188,11 @@ fun MyAppsScreenPreview() {
         Scaffold {
             AppGrid(
                 listOf(
-                AppInfo("App 1", "com.app1", RED.toDrawable()),
-                AppInfo("App 2", "com.app2", GREEN.toDrawable()),
-                AppInfo("App 3", "com.app3", BLUE.toDrawable()),
-                AppInfo("Very long app name that should be ellipsized", "com.app4", YELLOW.toDrawable()),
-            ),
+                    AppInfo("App 1", "com.app1", RED.toDrawable()),
+                    AppInfo("App 2", "com.app2", GREEN.toDrawable()),
+                    AppInfo("App 3", "com.app3", BLUE.toDrawable()),
+                    AppInfo("Very long app name that should be ellipsized", "com.app4", YELLOW.toDrawable()),
+                ),
                 paddingValues = it,
             )
         }
