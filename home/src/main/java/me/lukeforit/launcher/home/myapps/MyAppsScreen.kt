@@ -2,6 +2,11 @@ package me.lukeforit.launcher.home.myapps
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color.BLUE
+import android.graphics.Color.GREEN
+import android.graphics.Color.RED
+import android.graphics.Color.YELLOW
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -36,12 +41,15 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.lukeforit.launcher.domain.model.AppInfo
+import me.lukeforit.launcher.uicore.ui.theme.Expedition33LauncherTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -142,5 +150,23 @@ fun launchApp(context: Context, packageName: String) {
         context.startActivity(launchIntent)
     } else {
         Toast.makeText(context, "Cannot launch app: $packageName", Toast.LENGTH_SHORT).show()
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun MyAppsScreenPreview() {
+    Expedition33LauncherTheme {
+        Scaffold {
+            AppGrid(
+                listOf(
+                AppInfo("App 1", "com.app1", RED.toDrawable()),
+                AppInfo("App 2", "com.app2", GREEN.toDrawable()),
+                AppInfo("App 3", "com.app3", BLUE.toDrawable()),
+                AppInfo("Very long app name that should be ellipsized", "com.app4", YELLOW.toDrawable()),
+            ),
+                paddingValues = it,
+            )
+        }
     }
 }

@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            Expedition33LauncherTheme {
+            Expedition33LauncherTheme(dynamicColor = false) {
                 NavMainScreen()
             }
         }
