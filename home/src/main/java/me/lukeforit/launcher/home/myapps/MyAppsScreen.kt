@@ -9,6 +9,7 @@ import android.graphics.Color.RED
 import android.graphics.Color.YELLOW
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -96,7 +97,9 @@ fun AppGridItem(app: AppInfo) {
         Box(
             modifier = Modifier
                 .size(80.dp)
-                .border(4.dp, MaterialTheme.colorScheme.primary, RotatedSquare),
+                .border(4.dp, MaterialTheme.colorScheme.outline, RotatedSquare)
+                .clip(RotatedSquare)
+                .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -156,7 +159,7 @@ fun launchApp(context: Context, packageName: String) {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MyAppsScreenPreview() {
-    Expedition33LauncherTheme {
+    Expedition33LauncherTheme(dynamicColor = false) {
         Scaffold {
             AppGrid(
                 listOf(

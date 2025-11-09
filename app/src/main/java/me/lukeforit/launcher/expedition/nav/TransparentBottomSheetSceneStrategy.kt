@@ -1,6 +1,7 @@
 package me.lukeforit.launcher.expedition.nav
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -30,7 +31,7 @@ internal class TransparentBottomSheetScene<T : Any>(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             onDismissRequest = onBack,
             properties = modalBottomSheetProperties,
-            containerColor = Color.Transparent,
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
             tonalElevation = 16.dp,
         ) {
             entry.Content()
