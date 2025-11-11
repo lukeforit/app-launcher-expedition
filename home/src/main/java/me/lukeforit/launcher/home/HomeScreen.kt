@@ -6,6 +6,8 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import me.lukeforit.launcher.domain.model.AppInfo
+import me.lukeforit.launcher.domain.model.HomePage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,23 +43,19 @@ fun HomeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .pointerInput(Unit) {
-                var dragStartedInBottomArea = false
                 var verticalDragAmount = 0f
                 detectDragGestures(
                     onDragStart = { offset ->
                         verticalDragAmount = 0f
-                        dragStartedInBottomArea = offset.y >= size.height * 0.5f
                     },
                     onDrag = { change, dragAmount ->
-                        if (dragStartedInBottomArea) {
-                            verticalDragAmount += dragAmount.y
-                            if (dragAmount.y < 0) {
-                                change.consume()
-                            }
+                        verticalDragAmount += dragAmount.y
+                        if (dragAmount.y < 0) {
+                            change.consume()
                         }
                     },
                     onDragEnd = {
-                        if (dragStartedInBottomArea && verticalDragAmount < -50.dp.toPx()) {
+                        if (verticalDragAmount < -50.dp.toPx()) {
                             onSwipeFromBottom()
                         }
                     }
@@ -79,7 +78,12 @@ fun HomeScreen(
                     CircularProgressIndicator(Modifier.padding(paddingValues))
                 }
 
-                is HomeState.Success -> {
+                is HomeState.Success -> HorizontalPager(
+                    state = rememberPagerState(initialPage = HomePage.Main.ordinal) { HomePage.entries.size }
+                ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                        Text("PAGE $it")
+                    }
                 }
 
                 is HomeState.Error -> {
