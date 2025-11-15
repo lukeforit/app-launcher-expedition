@@ -1,5 +1,6 @@
 package me.lukeforit.launcher.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -30,13 +32,14 @@ import androidx.core.graphics.drawable.toDrawable
 import me.lukeforit.launcher.domain.model.AppInfo
 import me.lukeforit.launcher.domain.model.HomePage
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     onSwipeFromBottom: () -> Unit,
     viewModel: HomeViewModel
 ) {
     val homeState by viewModel.homeState.collectAsState()
+    val pagerState = rememberPagerState(initialPage = HomePage.Main.ordinal) { HomePage.entries.size }
 
     Box(
         modifier = Modifier
@@ -67,8 +70,13 @@ fun HomeScreen(
             contentDescription = "background",
             modifier = Modifier
                 .fillMaxSize()
+                .graphicsLayer {
+                    val pageOffset =
+                        pagerState.currentPage - HomePage.Main.ordinal + pagerState.currentPageOffsetFraction
+                    translationX = pageOffset * -100f
+                }
                 .alpha(0.8f),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillHeight
         )
         Scaffold(
             containerColor = Color.Transparent
@@ -79,7 +87,7 @@ fun HomeScreen(
                 }
 
                 is HomeState.Success -> HorizontalPager(
-                    state = rememberPagerState(initialPage = HomePage.Main.ordinal) { HomePage.entries.size }
+                    state = pagerState
                 ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                         Text("PAGE $it")
