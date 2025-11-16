@@ -19,10 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -40,6 +40,7 @@ fun HomeScreen(
 ) {
     val homeState by viewModel.homeState.collectAsState()
     val pagerState = rememberPagerState(initialPage = HomePage.Main.ordinal) { HomePage.entries.size }
+    val pageOffset = pagerState.currentPage - HomePage.Main.ordinal + pagerState.currentPageOffsetFraction
 
     Box(
         modifier = Modifier
@@ -70,13 +71,11 @@ fun HomeScreen(
             contentDescription = "background",
             modifier = Modifier
                 .fillMaxSize()
-                .graphicsLayer {
-                    val pageOffset =
-                        pagerState.currentPage - HomePage.Main.ordinal + pagerState.currentPageOffsetFraction
-                    translationX = pageOffset * -100f
-                }
                 .alpha(0.8f),
-            contentScale = ContentScale.FillHeight
+            contentScale = ContentScale.Crop,
+            // This is extremely inefficient as the image is redrawn when one of its paint parameters changes
+            // Since alignment depends on the pager offset it recomposes images multiple times on a single swipe
+            alignment = BiasAlignment(pageOffset, 0f),
         )
         Scaffold(
             containerColor = Color.Transparent
