@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.lukeforit.launcher.domain.AppInfoProvider
 import javax.inject.Inject
@@ -13,7 +14,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val appInfoProvider: AppInfoProvider) : ViewModel() {
 
     private val _homeState = MutableStateFlow<HomeState>(HomeState.Loading)
-    val homeState: StateFlow<HomeState> = _homeState
+    val homeState: StateFlow<HomeState> = _homeState.asStateFlow()
 
     init {
         loadApplications()

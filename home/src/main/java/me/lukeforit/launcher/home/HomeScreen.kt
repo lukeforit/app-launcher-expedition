@@ -1,7 +1,6 @@
 package me.lukeforit.launcher.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -19,12 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,17 +66,22 @@ fun HomeScreen(
                 )
             }
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.test_image),
-            contentDescription = "background",
-            modifier = Modifier
+        Layout(
+            Modifier
                 .fillMaxSize()
-                .alpha(0.8f),
-            contentScale = ContentScale.Crop,
-            // This is extremely inefficient as the image is redrawn when one of its paint parameters changes
-            // Since alignment depends on the pager offset it recomposes images multiple times on a single swipe
-            alignment = BiasAlignment(pageOffset, 0f),
-        )
+                .graphicsLayer {
+                    translationX = -pageOffset * 200f
+                }
+                .paint(
+                    painterResource(id = R.drawable.test_image),
+                    alignment = Alignment.Center,
+                    contentScale = ContentScale.Crop,
+                    alpha = 0.8f,
+                    colorFilter = null,
+                )
+        ) { _, constraints ->
+            layout(constraints.minWidth, constraints.minHeight) {}
+        }
         Scaffold(
             containerColor = Color.Transparent
         ) { paddingValues ->
