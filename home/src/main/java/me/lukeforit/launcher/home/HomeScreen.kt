@@ -1,7 +1,6 @@
 package me.lukeforit.launcher.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -33,6 +32,9 @@ import androidx.core.graphics.drawable.toDrawable
 import me.lukeforit.launcher.domain.model.AppInfo
 import me.lukeforit.launcher.domain.model.HomePage
 
+private const val SWIPE_THRESHOLD = 50
+private const val BACKGROUND_OFFSET = 200f
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
@@ -60,7 +62,7 @@ fun HomeScreen(
                         }
                     },
                     onDragEnd = {
-                        if (verticalDragAmount < -50.dp.toPx()) {
+                        if (verticalDragAmount < -SWIPE_THRESHOLD.dp.toPx()) {
                             onSwipeFromBottom()
                         }
                     }
@@ -71,7 +73,7 @@ fun HomeScreen(
             Modifier
                 .fillMaxSize()
                 .graphicsLayer {
-                    translationX = -pageOffset * 200f
+                    translationX = -pageOffset * BACKGROUND_OFFSET
                 }
                 .paint(
                     painterResource(id = R.drawable.test_image),
