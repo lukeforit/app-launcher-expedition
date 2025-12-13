@@ -6,13 +6,13 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
+import me.lukeforit.launcher.uicore.ui.component.DragHandle
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal class TransparentBottomSheetScene<T : Any>(
@@ -33,6 +33,7 @@ internal class TransparentBottomSheetScene<T : Any>(
             properties = modalBottomSheetProperties,
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
             tonalElevation = 16.dp,
+            dragHandle = { DragHandle() }
         ) {
             entry.Content()
         }

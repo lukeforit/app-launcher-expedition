@@ -81,7 +81,7 @@ fun HomeScreen(
                     contentScale = ContentScale.Crop,
                     alpha = 0.8f,
                     colorFilter = null,
-                )
+                ),
         ) { _, constraints ->
             layout(constraints.minWidth, constraints.minHeight) {}
         }
