@@ -1,7 +1,5 @@
 package me.lukeforit.launcher.home.myapps
 
-import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color.BLUE
 import android.graphics.Color.GREEN
@@ -10,7 +8,6 @@ import android.graphics.Color.YELLOW
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,7 +38,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,14 +58,19 @@ fun MyAppsScreen(viewModel: MyAppsViewModel) {
     Scaffold(
         containerColor = Color.Transparent,
     ) { paddingValues ->
-        AppGrid(apps = myAppsState.apps, paddingValues = paddingValues)
+        AppGrid(
+            apps = myAppsState.apps, 
+            paddingValues = paddingValues,
+            onEvent = viewModel::onEvent
+        )
     }
 }
 
 @Composable
-fun AppGrid(
+private fun AppGrid(
     apps: List<AppInfo>,
     paddingValues: PaddingValues = PaddingValues(),
+    onEvent: (MyAppsEvents) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
@@ -79,17 +80,16 @@ fun AppGrid(
         contentPadding = paddingValues
     ) {
         items(apps) { app ->
-            AppGridItem(app = app)
+            AppGridItem(app = app, onEvent = onEvent)
         }
     }
 }
 
 @Composable
-fun AppGridItem(app: AppInfo) {
-    val context = LocalContext.current
+private fun AppGridItem(app: AppInfo, onEvent: (MyAppsEvents) -> Unit) {
     Column(
         modifier = Modifier
-            .clickable { launchApp(context, app.packageName) }
+            .clickable { onEvent(MyAppsEvents.LaunchApp(app)) }
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -169,18 +169,6 @@ val RotatedSquare = object : Shape {
     }
 }
 
-fun launchApp(context: Context, packageName: String) {
-    val launchIntent: Intent? = context.packageManager
-        .getLaunchIntentForPackage(packageName)
-
-    if (launchIntent != null) {
-        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(launchIntent)
-    } else {
-        Toast.makeText(context, "Cannot launch app: $packageName", Toast.LENGTH_SHORT).show()
-    }
-}
-
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MyAppsScreenPreview() {
@@ -194,6 +182,7 @@ fun MyAppsScreenPreview() {
                     AppInfo("Very long app name that should be ellipsized", "com.app4", YELLOW.toDrawable()),
                 ),
                 paddingValues = it,
+                onEvent = {}
             )
         }
     }

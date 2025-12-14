@@ -6,6 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.lukeforit.launcher.domain.AppInfoProvider
 import me.lukeforit.launcher.domain.AppInfoProviderImpl
+import me.lukeforit.launcher.domain.AppLauncher
+import me.lukeforit.launcher.domain.AppLauncherImpl
 import javax.inject.Singleton
 
 @Module
@@ -15,4 +17,9 @@ abstract class DomainModule {
     @Binds
     @Singleton
     abstract fun appInfoProvider(impl: AppInfoProviderImpl): AppInfoProvider
+
+    @Binds
+    @Singleton
+    abstract fun appLauncher(impl: AppLauncherImpl): AppLauncher
+
 }
