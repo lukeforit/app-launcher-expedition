@@ -31,24 +31,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import me.lukeforit.launcher.domain.model.AppInfo
+import me.lukeforit.launcher.uicore.ui.theme.Spacing
 import me.lukeforit.launcher.uicore.ui.theme.Expedition33LauncherTheme
+import me.lukeforit.launcher.uicore.ui.theme.Shapes
+import me.lukeforit.launcher.uicore.ui.theme.Size
+
+private val TileSize = 80.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,10 +72,10 @@ private fun AppGrid(
     onEvent: (MyAppsEvents) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 128.dp),
+        columns = GridCells.Adaptive(minSize = Size.Large),
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(Spacing.Medium),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.Medium),
         contentPadding = paddingValues
     ) {
         items(apps) { app ->
@@ -90,20 +89,20 @@ private fun AppGridItem(app: AppInfo, onEvent: (MyAppsEvents) -> Unit) {
     Column(
         modifier = Modifier
             .clickable { onEvent(MyAppsEvents.LaunchApp(app)) }
-            .padding(8.dp),
+            .padding(Spacing.Medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .size(80.dp)
-                .border(4.dp, MaterialTheme.colorScheme.outline, RotatedSquare)
-                .clip(RotatedSquare)
+                .size(TileSize)
+                .border(Size.BorderMedium, MaterialTheme.colorScheme.outline, Shapes.RotatedSquare)
+                .clip(Shapes.RotatedSquare)
                 .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
         ) {
             AppIconImage(
                 icon = app.icon,
-                modifier = Modifier.size(64.dp),
+                modifier = Modifier.size(Size.Medium),
             )
         }
 
@@ -147,24 +146,6 @@ fun AppIconImage(
             painter = rememberDrawablePainter(icon),
             contentDescription = null,
             modifier = modifier
-        )
-    }
-}
-
-val RotatedSquare = object : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        return Outline.Generic(
-            path = Path().apply {
-                moveTo(size.width / 2f, 0f)
-                lineTo(size.width, size.height / 2f)
-                lineTo(size.width / 2f, size.height)
-                lineTo(0f, size.height / 2f)
-                close()
-            }
         )
     }
 }
