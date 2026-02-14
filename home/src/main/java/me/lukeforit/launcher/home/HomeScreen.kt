@@ -43,7 +43,6 @@ fun HomeScreen(
 ) {
     val homeState by viewModel.homeState.collectAsState()
     val pagerState = rememberPagerState(initialPage = HomePage.Main.ordinal) { HomePage.entries.size }
-    val pageOffset = pagerState.currentPage - HomePage.Main.ordinal + pagerState.currentPageOffsetFraction
 
     Box(
         modifier = Modifier
@@ -73,7 +72,8 @@ fun HomeScreen(
             Modifier
                 .fillMaxSize()
                 .graphicsLayer {
-                    translationX = -pageOffset * BACKGROUND_OFFSET
+                    val offset = (pagerState.currentPage - HomePage.Main.ordinal) + pagerState.currentPageOffsetFraction
+                    translationX = -offset * BACKGROUND_OFFSET
                 }
                 .paint(
                     painterResource(id = R.drawable.test_image),
