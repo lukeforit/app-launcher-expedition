@@ -50,21 +50,24 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background)
             .pointerInput(Unit) {
                 var verticalDragAmount = 0f
+                var hasSwiped = false
                 detectDragGestures(
-                    onDragStart = { offset ->
+                    onDragStart = {
                         verticalDragAmount = 0f
+                        hasSwiped = false
                     },
                     onDrag = { change, dragAmount ->
                         verticalDragAmount += dragAmount.y
                         if (dragAmount.y < 0) {
                             change.consume()
                         }
-                    },
-                    onDragEnd = {
-                        if (verticalDragAmount < -SWIPE_THRESHOLD.dp.toPx()) {
+
+                        if (!hasSwiped && verticalDragAmount < -SWIPE_THRESHOLD.dp.toPx()) {
+                            hasSwiped = true
                             onSwipeFromBottom()
                         }
-                    }
+                    },
+                    onDragEnd = {}
                 )
             }
     ) {
