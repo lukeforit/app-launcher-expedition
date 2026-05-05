@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -17,6 +18,9 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -31,6 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import me.lukeforit.launcher.domain.model.AppInfo
 import me.lukeforit.launcher.domain.model.HomePage
+import me.lukeforit.launcher.home.main.ObservableTimeEffect
+import me.lukeforit.launcher.uicore.ui.component.MonolithClock
+import java.util.Calendar
 
 private const val SWIPE_THRESHOLD = 50
 private const val BACKGROUND_OFFSET = 200f
@@ -43,6 +50,14 @@ fun HomeScreen(
 ) {
     val homeState by viewModel.homeState.collectAsState()
     val pagerState = rememberPagerState(initialPage = HomePage.Main.ordinal) { HomePage.entries.size }
+
+    var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
+    ObservableTimeEffect {
+        currentTime = Calendar.getInstance()
+    }
+
+    val hours = currentTime.get(Calendar.HOUR_OF_DAY).toString().padStart(2, '0')
+    val minutes = currentTime.get(Calendar.MINUTE).toString().padStart(2, '0')
 
     Box(
         modifier = Modifier
@@ -82,7 +97,7 @@ fun HomeScreen(
                     painterResource(id = R.drawable.test_image),
                     alignment = Alignment.Center,
                     contentScale = ContentScale.Crop,
-                    alpha = 0.8f,
+                    alpha = 0.9f,
                     colorFilter = null,
                 ),
         ) { _, constraints ->
@@ -111,6 +126,17 @@ fun HomeScreen(
                     )
                 }
             }
+        }
+
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val topPadding = maxHeight * 0.05f
+            MonolithClock(
+                hours = hours,
+                minutes = minutes,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = topPadding, start = maxWidth * 0.1f)
+            )
         }
     }
 }
