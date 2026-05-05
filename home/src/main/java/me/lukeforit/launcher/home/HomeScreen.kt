@@ -136,6 +136,11 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = topPadding, start = maxWidth * 0.1f)
+                    .graphicsLayer {
+                        val offset =
+                            (pagerState.currentPage - HomePage.Main.ordinal) + pagerState.currentPageOffsetFraction
+                        translationX = -offset * BACKGROUND_OFFSET
+                    }
             )
         }
     }
