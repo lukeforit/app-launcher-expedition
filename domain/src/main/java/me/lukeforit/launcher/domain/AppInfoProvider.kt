@@ -4,17 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import me.lukeforit.launcher.domain.di.IoDispatcher
 import me.lukeforit.launcher.domain.model.AppInfo
 import javax.inject.Inject
 
 interface AppInfoProvider {
-    fun getInstalledApps(): List<AppInfo>
+    suspend fun getInstalledApps(): List<AppInfo>
 }
 
 class AppInfoProviderImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AppInfoProvider {
-    override fun getInstalledApps(): List<AppInfo> {
+    override suspend fun getInstalledApps(): List<AppInfo> = withContext(ioDispatcher) {
         val packageManager = context.packageManager
 
         val mainIntent = Intent(Intent.ACTION_MAIN, null)
@@ -32,6 +36,6 @@ class AppInfoProviderImpl @Inject constructor(
             )
             appList.add(app)
         }
-        return appList.sortedBy { it.label.lowercase() }
+        appList.sortedBy { it.label.lowercase() }
     }
 }
