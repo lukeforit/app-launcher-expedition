@@ -9,14 +9,14 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import me.lukeforit.launcher.domain.AppInfoProvider
 import me.lukeforit.launcher.domain.AppLauncher
+import me.lukeforit.launcher.domain.AppRepository
 import me.lukeforit.launcher.domain.model.AppInfo
 import javax.inject.Inject
 
 @HiltViewModel
 class MyAppsViewModel @Inject constructor(
-    private val appInfoProvider: AppInfoProvider,
+    private val appRepository: AppRepository,
     private val appLauncher: AppLauncher
 ) : ViewModel() {
 
@@ -36,8 +36,12 @@ class MyAppsViewModel @Inject constructor(
     private fun loadApplications() {
         viewModelScope.launch {
             try {
-                val apps = appInfoProvider.getInstalledApps()
-                _myAppsState.value = MyAppsState(apps.toImmutableList())
+                if (appRepository.installedApps.value.isEmpty()) {
+                    appRepository.refreshApps()
+                }
+                appRepository.installedApps.collect { apps ->
+                    _myAppsState.value = MyAppsState(apps.toImmutableList())
+                }
             } catch (e: Exception) {
                 // swallow
             }

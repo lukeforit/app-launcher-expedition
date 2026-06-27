@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import me.lukeforit.launcher.domain.AppInfoProvider
+import me.lukeforit.launcher.domain.AppRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val appInfoProvider: AppInfoProvider) : ViewModel() {
+class HomeViewModel @Inject constructor(private val appRepository: AppRepository) : ViewModel() {
 
     private val _homeState = MutableStateFlow<HomeState>(HomeState.Loading)
     val homeState: StateFlow<HomeState> = _homeState.asStateFlow()
@@ -24,8 +24,12 @@ class HomeViewModel @Inject constructor(private val appInfoProvider: AppInfoProv
         viewModelScope.launch {
             _homeState.value = HomeState.Loading
             try {
-                val apps = appInfoProvider.getInstalledApps()
-                _homeState.value = HomeState.Success(apps)
+                if (appRepository.installedApps.value.isEmpty()) {
+                    appRepository.refreshApps()
+                }
+                appRepository.installedApps.collect { apps ->
+                    _homeState.value = HomeState.Success(apps)
+                }
             } catch (e: Exception) {
                 _homeState.value = HomeState.Error("Failed to load apps")
             }

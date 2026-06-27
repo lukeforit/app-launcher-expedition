@@ -8,6 +8,8 @@ import me.lukeforit.launcher.domain.AppInfoProvider
 import me.lukeforit.launcher.domain.AppInfoProviderImpl
 import me.lukeforit.launcher.domain.AppLauncher
 import me.lukeforit.launcher.domain.AppLauncherImpl
+import me.lukeforit.launcher.domain.AppRepository
+import me.lukeforit.launcher.domain.AppRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -22,4 +24,7 @@ abstract class DomainModule {
     @Singleton
     abstract fun appLauncher(impl: AppLauncherImpl): AppLauncher
 
+    @Binds
+    @Singleton
+    abstract fun appRepository(impl: AppRepositoryImpl): AppRepository
 }
