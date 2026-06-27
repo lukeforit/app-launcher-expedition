@@ -14,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,10 +29,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toDrawable
-import me.lukeforit.launcher.domain.model.AppInfo
 import me.lukeforit.launcher.domain.model.HomePage
 import me.lukeforit.launcher.home.main.ObservableTimeEffect
 import me.lukeforit.launcher.uicore.ui.component.MonolithClock
@@ -143,25 +139,5 @@ fun HomeScreen(
                     }
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewAppList() {
-    MaterialTheme(colorScheme = darkColorScheme()) {
-        val dummyApps = listOf(
-            AppInfo(
-                label = "Gmail", packageName = "com.google.android.gm", icon = 0xFFF44336.toInt().toDrawable()
-            ),
-            AppInfo(
-                label = "Maps", packageName = "com.google.android.apps.maps",
-                icon = 0xFF4CAF50.toInt().toDrawable()
-            ),
-            AppInfo(
-                label = "YouTube", packageName = "com.google.android.youtube",
-                icon = 0xFF2196F3.toInt().toDrawable()
-            ),
-        )
     }
 }
