@@ -10,6 +10,8 @@ import me.lukeforit.launcher.domain.AppLauncher
 import me.lukeforit.launcher.domain.AppLauncherImpl
 import me.lukeforit.launcher.domain.AppRepository
 import me.lukeforit.launcher.domain.AppRepositoryImpl
+import me.lukeforit.launcher.domain.ShortcutRepository
+import me.lukeforit.launcher.domain.ShortcutRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -27,4 +29,8 @@ abstract class DomainModule {
     @Binds
     @Singleton
     abstract fun appRepository(impl: AppRepositoryImpl): AppRepository
+
+    @Binds
+    @Singleton
+    abstract fun shortcutRepository(impl: ShortcutRepositoryImpl): ShortcutRepository
 }

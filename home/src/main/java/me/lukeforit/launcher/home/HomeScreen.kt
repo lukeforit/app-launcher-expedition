@@ -31,6 +31,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import me.lukeforit.launcher.domain.model.HomePage
+import me.lukeforit.launcher.home.main.MainPage
 import me.lukeforit.launcher.home.main.ObservableTimeEffect
 import me.lukeforit.launcher.uicore.ui.component.MonolithClock
 import java.util.Calendar
@@ -109,9 +110,19 @@ fun HomeScreen(
 
                 is HomeState.Success -> HorizontalPager(
                     state = pagerState
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-                        Text("PAGE $it")
+                ) { pageIndex ->
+                    when (pageIndex) {
+                        HomePage.Main.ordinal -> {
+                            MainPage(
+                                shortcuts = state.shortcuts,
+                                onLaunchApp = { viewModel.onEvent(HomeEvents.LaunchApp(it)) }
+                            )
+                        }
+                        else -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                                Text("PAGE $pageIndex")
+                            }
+                        }
                     }
                 }
 

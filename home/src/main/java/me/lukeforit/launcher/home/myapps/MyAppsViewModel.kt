@@ -11,13 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import me.lukeforit.launcher.domain.AppLauncher
 import me.lukeforit.launcher.domain.AppRepository
+import me.lukeforit.launcher.domain.ShortcutRepository
 import me.lukeforit.launcher.domain.model.AppInfo
 import javax.inject.Inject
 
 @HiltViewModel
 class MyAppsViewModel @Inject constructor(
     private val appRepository: AppRepository,
-    private val appLauncher: AppLauncher
+    private val appLauncher: AppLauncher,
+    private val shortcutRepository: ShortcutRepository
 ) : ViewModel() {
 
     private val _myAppsState = MutableStateFlow(MyAppsState(persistentListOf()))
@@ -30,6 +32,11 @@ class MyAppsViewModel @Inject constructor(
     fun onEvent(event: MyAppsEvents) {
         when (event) {
             is MyAppsEvents.LaunchApp -> appLauncher.launchApp(event.app.packageName)
+            is MyAppsEvents.AddShortcut -> {
+                viewModelScope.launch {
+                    shortcutRepository.addShortcut(event.app.packageName)
+                }
+            }
         }
     }
 
@@ -53,4 +60,5 @@ data class MyAppsState(val apps: ImmutableList<AppInfo>)
 
 sealed interface MyAppsEvents {
     class LaunchApp(val app: AppInfo) : MyAppsEvents
+    class AddShortcut(val app: AppInfo) : MyAppsEvents
 }

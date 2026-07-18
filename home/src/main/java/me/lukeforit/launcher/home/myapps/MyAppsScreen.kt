@@ -8,10 +8,11 @@ import android.graphics.Color.YELLOW
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +52,7 @@ private val TileSize = 80.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyAppsScreen(viewModel: MyAppsViewModel) {
+fun MyAppsScreen(viewModel: MyAppsViewModel, onDismiss: () -> Unit) {
     val myAppsState by viewModel.myAppsState.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -60,7 +61,12 @@ fun MyAppsScreen(viewModel: MyAppsViewModel) {
         AppGrid(
             apps = myAppsState.apps, 
             paddingValues = paddingValues,
-            onEvent = viewModel::onEvent
+            onEvent = { event ->
+                viewModel.onEvent(event)
+                if (event is MyAppsEvents.AddShortcut) {
+                    onDismiss()
+                }
+            }
         )
     }
 }
@@ -84,11 +90,15 @@ private fun AppGrid(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AppGridItem(app: AppInfo, onEvent: (MyAppsEvents) -> Unit) {
     Column(
         modifier = Modifier
-            .clickable { onEvent(MyAppsEvents.LaunchApp(app)) }
+            .combinedClickable(
+                onClick = { onEvent(MyAppsEvents.LaunchApp(app)) },
+                onLongClick = { onEvent(MyAppsEvents.AddShortcut(app)) }
+            )
             .padding(Spacing.Medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -43,7 +43,10 @@ fun NavMainScreen() {
                 metadata = TransparentBottomSheetSceneStrategy.bottomSheet()
             ) {
                 val viewModel = hiltViewModel<MyAppsViewModel>()
-                MyAppsScreen(viewModel = viewModel)
+                MyAppsScreen(
+                    viewModel = viewModel,
+                    onDismiss = { backStack.removeLastOrNull() }
+                )
             }
         }
     )
