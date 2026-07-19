@@ -30,7 +30,11 @@ fun NavMainScreen() {
     NavDisplay(
         backStack = backStack,
         sceneStrategy = bottomSheetStrategy,
-        onBack = { backStack.removeLastOrNull() },
+        onBack = {
+            if (backStack.size > 1) {
+                backStack.removeLastOrNull()
+            }
+        },
         entryProvider = entryProvider {
             entry<NavScreen.Home> {
                 val viewModel = hiltViewModel<HomeViewModel>()
